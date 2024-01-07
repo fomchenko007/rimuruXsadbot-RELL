@@ -1,16 +1,18 @@
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 
 let handler = async (m, {
     conn,
     command,
     text
 }) => {
+    let ucapan = ''; // Tambahkan baris ini
+    let botdate = new Date().toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' });
     let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender;
     let pp = await conn.profilePictureUrl(who).catch(_ => hwaifu.getRandom());
     let name = await conn.getName(who);
 
     if (!text) return conn.reply(m.chat, '*Masukan Namamu Udin!*', m);
-
+    
     const attributes = ['Baik Hati', 'Sombong', 'Pelit', 'Dermawan', 'Rendah Hati', 'Rendah Diri', 'Pemalu', 'Penakut', 'Pengusil', 'Cengeng'];
     const behaviors = ['Rajin', 'Malas', 'Membantu', 'Ngegosip', 'Jail', 'Gak jelas', 'Shoping', 'Chattan sama Doi', 'Chattan di WA karna Jomblo', 'Sedih', 'Kesepian', 'Bahagia'];
 
