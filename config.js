@@ -1,3 +1,22 @@
+let fs = require('fs')
+let chalk = require('chalk')
+const { watchFile, unwatchFile } = require('fs');
+const moment = require('moment-timezone');
+/*============= WAKTU =============*/
+let wibh = moment.tz('Asia/Jakarta').format('HH');
+let wibm = moment.tz('Asia/Jakarta').format('mm');
+let wibs = moment.tz('Asia/Jakarta').format('ss');
+let wktuwib = `${wibh} H ${wibm} M ${wibs} S`;
+let d = new Date(new Date() + 3600000);
+let locale = 'id';
+let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5];
+let week = d.toLocaleDateString(locale, { weekday: 'long' });
+let date = d.toLocaleDateString(locale, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
+
 global.owner = ['6282257529886']  
 global.mods = ['6282257529886'] 
 global.prems = ['6282257529886']
@@ -45,6 +64,11 @@ global.kki = '「'
 global.kka = '」'
 global.zt = '*'
 global.zc = ''
+
+//hiasan
+
+
+
 
 // BARU BARU AJA
 global.snh = 'https://whatsapp.com/channel/0029VaCvaNgBPzjcfrTixA1U'
@@ -167,8 +191,6 @@ global.rpg = {
 }
 
 
-let fs = require('fs')
-let chalk = require('chalk')
 let file = require.resolve(__filename)
 fs.watchFile(file, () => {
   fs.unwatchFile(file)

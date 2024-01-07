@@ -1,56 +1,91 @@
-let handler = async (m, { conn, isAdmin, isOwner, args, usedPrefix, command }) => {
-  if (!(isAdmin || isOwner)) {
-	  global.dfail('admin', m, conn)
-          throw false
-  }
-  let isClose = {
-	  'open': 'not_announcement',
-	  'buka': 'not_announcement',
-      'on': 'not_announcement',
-	  '1': 'not_announcement',
-	  'close': 'announcement',
-	  'tutup': 'announcement',
-      'off': 'announcement',
-      '0': 'announcement',
-  }[(args[0] || '')]
-  if (isClose === undefined) {
-	  let caption = `
-Contoh:
-*${usedPrefix + command} tutup*
-*${usedPrefix + command} buka*
+let handler = async (m, {
+    conn,
+    args,
+    usedPrefix,
+    command
+}) => {
+    const groupMeta = await conn.groupMetadata(m.chat);
+    const isRestricted = groupMeta.restrict;
+    const isAnnounced = groupMeta.announce;
 
-Contoh pilihan: *${usedPrefix + command} tutup 1* 
-Maka grup akan di buka otomatis 1 jam kemudian.
-`
-      m.reply(caption)
-	  throw false
-  }
-  let timeoutset = 86400000 * args[1] / 24
-  await conn.groupSettingUpdate(m.chat, isClose).then(async _=> {
-	  m.reply(`Sukses me${isClose == 'announcement' ? 'nutup' : 'mbuka'} grup${args[1] ? `, grup akan dibuka setelah *${clockString(timeoutset)}*` : ''}`)
-  })
-  if (args[1]) {
-	 setTimeout(async () => {
-            await conn.groupSettingUpdate(m.chat, `${isClose == 'announcement' ? 'not_announcement' : 'announcement'}`).then(async _=>{
-		    conn.reply(m.chat, `Grup telah di ${isClose == 'not_announcement' ? 'tutup, sekarang hanya admin yang dapat mengirim pesan' : 'buka, sekarang semua member bisa mengirim pesan'}!`)
-	    })
-        }, timeoutset)
-  }
-  }
-handler.help = ['grouptime <open/close> <number>']
-handler.tags = ['group']
-handler.command = /^(grouptime|gctime)$/i
+    const actionMap = {
+        'open': {
+            target: 'not_announcement',
+            message: 'membuka',
+            check: !isRestricted
+        },
+        'close': {
+            target: 'announcement',
+            message: 'menutup',
+            check: isRestricted && !isAnnounced
+        },
+        'unlock': {
+            target: 'unlocked',
+            message: 'membuka',
+            check: !isAnnounced
+        },
+        'lock': {
+            target: 'lock',
+            message: 'mengunci',
+            check: isAnnounced && !isRestricted
+        },
+    };
 
-handler.botAdmin = true
-handler.admin = true
-handler.group = true 
+    const action = args[0] || '';
+    const actionDetails = actionMap[action];
+
+    if (!actionDetails) {
+        await conn.reply(m.chat, `
+*Format salah! Contoh :*
+○ ${usedPrefix + command} close 1menit
+○ ${usedPrefix + command} open 30menit
+○ ${usedPrefix + command} unlock 15menit
+○ ${usedPrefix + command} lock 5menit
+        `.trim(), m);
+        return;
+    }
+
+    if (!actionDetails.check) {
+        await conn.reply(m.chat, `Grup ini sudah dalam kondisi yang tidak dapat diubah.`, m);
+        return;
+    }
+
+    const timeInput = args[1];
+    const timeMatch = timeInput.match(/^(\d+)([a-zA-Z]+)$/);
+
+    if (!timeMatch || isNaN(timeMatch[1])) {
+        await conn.reply(m.chat, "Format waktu tidak valid. Gunakan format '1detik/menit/jam/hari'.", m);
+        return;
+    }
+
+    const [timeValue, timeUnit] = [parseInt(timeMatch[1]), timeMatch[2].toLowerCase()];
+    const timeUnits = {
+        detik: 1000,
+        menit: 60 * 1000,
+        jam: 60 * 60 * 1000,
+        hari: 24 * 60 * 60 * 1000
+    };
+
+    if (!(timeUnit in timeUnits) || timeValue <= 0) {
+        await conn.reply(m.chat, "Waktu yang dimasukkan tidak valid. Gunakan angka positif untuk waktu.", m);
+        return;
+    }
+
+    const timeInMilliseconds = timeValue * timeUnits[timeUnit];
+    const actionMessage = actionDetails.message;
+
+    const processingMessage = await conn.reply(m.chat, `Sedang ${actionMessage} grup setelah ${timeInput}...`, m);
+
+    setTimeout(async () => {
+        await conn.groupSettingUpdate(m.chat, actionDetails.target);
+        await conn.reply(m.chat, `Grup telah ${actionMessage} setelah ${timeInput}`, processingMessage);
+    }, timeInMilliseconds);
+};
+
+handler.help = ['grouptime'];
+handler.tags = ['group'];
+handler.command = /^(grouptime)$/i;
+handler.admin = true;
+handler.botAdmin = true;
 
 module.exports = handler
-
-function clockString(ms) {
-  let h = Math.floor(ms / 3600000)
-  let m = Math.floor(ms / 60000) % 60
-  let s = Math.floor(ms / 1000) % 60
-  console.log({ms,h,m,s})
-  return [h, m, s].map(v => v.toString().padStart(2, 0) ).join(':')
-}

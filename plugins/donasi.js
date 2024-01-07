@@ -3,18 +3,14 @@ let handler = async (m, { conn, args, command }) => {
 let qris = 'https://telegra.ph/file/68ed95f6f915aae73fa0a.jpg'
 let dann =
 `
-┏━━━ꕥ〔 *NOMOR* 〕ꕥ━⬣ 
-┃Dana: 082257529886
-┃Pulsa: 082257529886 ( telkomsel )
-┗━━━ꕥ
-┏━━━ꕥ〔 *Website* 〕ꕥ━⬣ 
-┃Saweria: https://saweria.co/Dimaskuyy
-┃
-┃Setelah melakukan donasi kirim bukti 
-┃pembayaran ke owner
-┃
-┃Thanks for Donationing!
-┗━━━ꕥ
+ᴋᴀᴍᴜ ʙɪsᴀ ᴅᴏɴᴀsɪ ᴅɪ ɴᴏᴍᴏʀ ᴅɪʙᴀᴡᴀʜ ɪɴɪ
+ᴀᴛᴀᴜ ᴍᴇɴɢɢᴜɴᴀᴋᴀɴ ʟɪɴᴋ sᴀᴡᴇʀɪᴀ
+
+│ ◦ *ᴅᴀɴᴀ* : 082257529886
+│ ◦ *pulsa* : 082257529886
+└ ◦ *sᴀᴡᴇʀɪᴀ* : https://saweria.co/Dimaskuyy
+
+*Semoga Anda diberikan kemudahan rezeki dan dilipatgandakan rezeki Anda.*
 `
  await conn.sendFile(m.chat, qris, 'qris.jpg', `${dann}`, m)
 }

@@ -1,3 +1,4 @@
+
 const cooldown = 28800000
 let handler = async (m, {
     conn,
@@ -9,30 +10,14 @@ let handler = async (m, {
 
     if (typeof global.db.data.users[who] == "undefined") {
         global.db.data.users[who] = {
-            exp: 0,
-            limit: 10,
-            lastclaim: 0,
-            lastdagang: 0,
-            registered: false,
-            name: conn.getName(m.sender),
-            age: -1,
-            regTime: -1,
-            afk: -1,
-            afkReason: '',
-            banned: false,
-            level: 0,
-            lastweekly: 0,
-            role: 'Warrior V',
-            autolevelup: false,
-            money: 0,
-            pasangan: "",
+            // properti user
         }
     }
 
     let user = global.db.data.users[who]
     let dapat = (Math.floor(Math.random() * 5000))
     if (!who) throw 'Tag salah satu lah, yang kamu ingin berdagang bareng'
-    let ctimer = (new Date - user.lastdagang)
+    let ctimer = (new Date() - user.lastdagang)
     let _ctimer = (cooldown - ctimer)
     let timers = clockString(_ctimer)
     if (user.lastdagang < cooldown) {
@@ -71,8 +56,8 @@ let handler = async (m, {
                 mentions: conn.parseMention(_caption)
             })
         }, 60000)
-        user.lastdagang = new Date * 1
-    } else conn.reply(m.chat, `Anda Sudah Berdagang tunggu\n${timers} lagi..`, botdate, m)
+        user.lastdagang = new Date() * 1
+    } else conn.reply(m.chat, `Anda Sudah Berdagang tunggu\n${timers} lagi..`, m)
 }
 handler.help = ['berdagang'].map(v => v + ' @[tag]')
 handler.tags = ['rpg']
@@ -80,6 +65,7 @@ handler.command = /^(berdagang|dagang)$/i
 handler.limit = true
 handler.cooldown = cooldown
 module.exports = handler
+
 
 function clockString(ms) {
     let d = isNaN(ms) ? '--' : Math.floor(ms / 86400000)

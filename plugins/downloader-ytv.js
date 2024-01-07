@@ -1,70 +1,75 @@
-const ytdl = require('ytdl-core');
-const fs = require('fs');
-const { pipeline } = require('stream');
-const { promisify } = require('util');
-const os = require('os');
+const fs = require("fs");
+const ytdl = require("ytdl-core");
 
-const streamPipeline = promisify(pipeline);
-
-var handler = async (m, { conn, command, text, usedPrefix }) => {
-  await conn.sendMessage(m.chat, {
-    react: {
-      text: "â³",
-      key: m.key,
+let handler = async (m, { conn, args, usedPrefix, command }) => {
+    conn["youtubedl"] = conn["youtubedl"] || {};
+    if (m.sender in conn["youtubedl"]) {
+        return;
     }
-  });
-
-  if (!text) throw `Usage: ${usedPrefix}${command} <YouTube Video URL>`;
-
-  const videoUrl = text;
-
-  const videoInfo = await ytdl.getInfo(videoUrl);
-  const { videoDetails } = videoInfo;
-  const { title, thumbnails, lengthSeconds, viewCount, uploadDate } = videoDetails;
-  const thumbnail = thumbnails[0].url;
-
-  const videoStream = ytdl(videoUrl, {
-    quality: 'highestvideo',
-  });
-
-  const writableStream = fs.createWriteStream(`tmp/${title}.mp4`);
-
-  await streamPipeline(videoStream, writableStream);
-
-  let doc = {
-    video: {
-      url: `tmp/${title}.mp4`
-    },
-    mimetype: 'video/mp4',
-    fileName: `${title}`,
-    contextInfo: {
-      externalAdReply: {
-        showAdAttribution: true,
-        mediaType: 2,
-        mediaUrl: videoUrl,
-        title: title,
-        sourceUrl: videoUrl,
-        thumbnail: await (await conn.getFile(thumbnail)).data
-      }
+    if (!args[0]) {
+        return m.reply(`Example: *${usedPrefix + command}* https://www.youtube.com/watch?v=Z28dtg_QmFw`);
     }
-  };
-
-  await conn.sendMessage(m.chat, doc, { quoted: m });
-
-  fs.unlink(`tmp/${title}.mp4`, (err) => {
-    if (err) {
-      console.error(`Failed to delete video file: ${err}`);
-    } else {
-      console.log(`Deleted video file: tmp/${title}.mp4`);
+    const isValid = await ytdl.validateURL(args[0]);
+    if (!isValid) {
+        return m.reply("*your link not suported.*");
     }
-  });
+
+    const _filename = `./tmp/${Math.random().toString(36).substring(2, 7)}.mp4`;
+    const writer = fs.createWriteStream(_filename);
+
+    conn["youtubedl"][m.sender] = true;
+    try {
+        const { formats, videoDetails } = await ytdl.getInfo(args[0]);
+        const { title, description, publishDate, author, isFamilySafe } = videoDetails;
+        const { user } = author;
+        return new Promise(async (resolve, reject) => {
+            ytdl(args[0], {
+                quality: "lowest",
+            }).pipe(writer);
+            writer.on("error", () => {
+                m.reply("Failed sending video");
+                delete conn["youtubedl"][m.sender];
+                resolve();
+            });
+            writer.on("close", async () => {
+                try {
+                    await conn.sendMessage(
+                        m.chat,
+                        {
+                            video: {
+                                stream: fs.createReadStream(_filename),
+                            },
+                            caption: `┌  • *Y o u t u b e - M P 4*\n│  ◦ *Title:* ${title}\n│  ◦ *Published:* ${publishDate}\n└  ◦ *Author:* ${user}`,
+                        },
+                        { quoted: m }
+                    );
+                } catch {
+                    await conn.sendMessage(
+                        m.chat,
+                        {
+                            document: {
+                                stream: fs.createReadStream(_filename),
+                            },
+                            fileName: `${title}.mp4`,
+                            mimetype: "video/mp4",
+                            caption: `┌  • *Y o u t u b e - M P 4*\n│  ◦ *Title:* ${title}\n│  ◦ *Published:* ${publishDate}\n└  ◦ *Author:* ${user}`,
+                        },
+                        { quoted: m }
+                    );
+                }
+                fs.unlinkSync(_filename);
+                delete conn["youtubedl"][m.sender];
+                resolve();
+            });
+        });
+    } catch {
+        m.reply("*Failed get a video!*");
+    }
 };
 
-handler.help = ['ytmp4'].map((v) => v + ' <YouTube Video URL>');
-handler.tags = ['downloader'];
-handler.command = /^(ytmp4)$/i;
-
-handler.exp = 0;
-handler.diamond = false;
+handler.help = ["ytmp4"].map((v) => v + ' url');
+handler.tags = ["downloader"];
+handler.command = /^yt(v|mp4)?$/i;
+handler.register = false;
 
 module.exports = handler;
