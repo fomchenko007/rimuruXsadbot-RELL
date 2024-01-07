@@ -19,4 +19,8 @@ handler.command = /^(getdb)$/i
 
 handler.rowner = true
 
+<<<<<<< HEAD
 module.exports = handler
+=======
+module.exports = handler
+>>>>>>> 34e21f3863668ad556edda43ccf8609829bfeeb0
