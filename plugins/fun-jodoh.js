@@ -10,11 +10,11 @@ let handler = async (m, {
     let toM = a => '@' + a.split('@')[0]
     if (command == 'jodohnya') {
         let ps = groupMetadata.participants.map(v => v.id)
-        let a = ps.getRandom()
+        let a = ps[Math.floor(Math.random() * ps.length)]
         let b
-        do b = ps.getRandom()
+        do b = ps[Math.floor(Math.random() * ps.length)]
         while (b === a)
-        let caption = `*Love Message...* ${toM(a)} ❤️ ${toM(b)}\n\n${await buchin.getRandom()}`
+        let caption = `*Love Message...* ${toM(a)} ❤️ ${toM(b)}\n\n${await buchin[Math.floor(Math.random() * buchin.length)]}`
         await conn.reply(m.chat, caption, m, {
             mentions: conn.parseMention(caption)
         })
@@ -22,9 +22,9 @@ let handler = async (m, {
 
     if (command == 'jodohku') {
         let ps = groupMetadata.participants.map(v => v.id)
-        let a = ps.getRandom()
+        let a = ps[Math.floor(Math.random() * ps.length)]
         let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-        let caption = `*Love Message...* ${toM(who)} ❤️ ${toM(a)}\n\n${await buchin.getRandom()}`
+        let caption = `*Love Message...* ${toM(who)} ❤️ ${toM(a)}\n\n${await buchin[Math.floor(Math.random() * buchin.length)]}`
         await conn.reply(m.chat, caption, m, {
             mentions: conn.parseMention(caption)
         })
