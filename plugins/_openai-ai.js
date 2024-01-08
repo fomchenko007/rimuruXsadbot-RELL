@@ -6,7 +6,7 @@ var handler = async (m, {
   usedPrefix,
   command
 }) => {
-  if (!text) throw `Masukkan pertanyaan!\n\n*Contoh:* Siapa presiden Indonesia? `;
+  if (!text) throw `Masukkan pertanyaan!\n\n*Contoh:* Siapa pencipta mu? `;
   await m.reply('wait');
   const senderId = m.sender;
   const messageContent = text;
@@ -70,7 +70,7 @@ async function sendWebhookMessage(senderId, messageContent, reply) {
             sendReplyMessages(replyMessages, 0);
           }, 1000); // Jeda 1 detik sebelum mengirim pesan pertama
         } else {
-          reply(`*Rimuru-Bot 2023*\n\n*•*_${replyMessage}_\n\n\n *© RimuruBot Gpt3.2 Azure Microsoft*`);
+          reply(`*Rimuru-Bot 2023*\n\n*•*_${replyMessage}_\n\n\n *© RimuruBot Gpt3.3 Azure Microsoft*`);
         }
 
         function sendReplyMessages(messages, index) {
