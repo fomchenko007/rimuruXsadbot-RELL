@@ -1,29 +1,19 @@
-let handler = async (m, { conn, text }) => {
-  conn.reply(m.chat, `Kayaknya ${Math.floor(Math.random() * 100)} ${pickRandom(['detik', 'menit', 'jam', 'hari', 'minggu', 'bulan', 'tahun', 'abad'])} lagi ...
-`.trim(), m, m.mentionedJid ? {
-  contextInfo: {
-    mentionedJid: m.mentionedJid
-  }
+let handler = async (m, { conn, text, command }) => {
+let jawab = ['detik', 'menit', 'jam', 'hari', 'minggu', 'bulan', 'tahun', 'dekade', 'abad']
+let kapan = jawab[Math.floor(Math.random() * jawab.length)]
+  conn.reply(m.chat, `
+*Pertanyaan:* ${command} ${text}
+*Jawaban:* ${Math.floor(Math.random() * 10)} ${kapan} lagi ...
+`.trim(), null, m.mentionedJid ? {
+  mentions: m.mentionedJid
 } : {})
 }
 handler.help = ['', 'kah'].map(v => 'kapan' + v + ' <text>?')
 handler.tags = ['kerang']
-handler.customPrefix = /(\?$)/
-handler.command = /^kapan(kah)?$/i
-handler.owner = false
-handler.mods = false
-handler.premium = false
-handler.group = false
-handler.private = false
 
-handler.admin = false
-handler.botAdmin = false
+handler.command = /^kapan(kah)?$/i
+handler.limit = true
 
 handler.fail = null
 
 module.exports = handler
-
-function pickRandom(list) {
-  return list[Math.floor(Math.random() * list.length)]
-}
-
