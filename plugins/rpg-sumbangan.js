@@ -12,7 +12,7 @@ async function handler(m, {
     if (isNaN(count)) return m.reply("⚠️ Jumlah sumbangan harus berupa angka.")
     let hasil = formatRupiah(Number(count));
     let txt = `Apakah kamu yakin ingin memberi sumbangan\n✅ (Yes) ❌ (No)`
-    let confirm = `😔 Kak bagi sumbangan\ncuma *${hasil}* dong.\n\n${txt}`;
+    let confirm = `😔 Kak bagi sumbangan\ncuma *${hasil}* doang kok.\n\n${txt}`;
     let {
         key
     } = await conn.reply(m.chat, confirm, m, {
