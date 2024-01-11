@@ -1,21 +1,17 @@
-let handler = async (m, { conn, text }) => {
-  conn.reply(m.chat, `${pickRandom(['Yap','Sepertinya Begitu','Kayaknya','Kayaknya nggak','Nggak','Nggak mungkin'])}
-`.trim(), m, m.mentionedJid ? {
-  contextInfo: {
-    mentionedJid: m.mentionedJid
-  }
+let handler = async (m, { command, text }) => {
+let jawab = ['Ya', 'Mungkin iya', 'Mungkin', 'Mungkin tidak', 'Tidak', 'Tidak mungkin']
+let siapa = jawab[Math.floor(Math.random() * jawab.length)]
+m.reply(`
+*Pertanyaan:* ${command} ${text}
+*Jawaban:* ${siapa}
+  `.trim(), null, m.mentionedJid ? {
+  mentions: m.mentionedJid
 } : {})
 }
-handler.help = ['apakah <teks>?']
+handler.help = ['apakah <teks>']
 handler.tags = ['kerang']
-handler.customPrefix = /(\?$)/
-handler.command = /^apakah$/i
-handler.owner = false
 
-handler.fail = null
+handler.command = /^apakah$/i
+handler.limit = true
 
 module.exports = handler
-
-function pickRandom(list) {
-  return list[Math.floor(Math.random() * list.length)]
-}
