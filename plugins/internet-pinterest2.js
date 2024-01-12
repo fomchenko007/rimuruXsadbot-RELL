@@ -1,116 +1,48 @@
-const fetch = require("node-fetch");
-const axios = require("axios");
-const cheerio = require("cheerio");
-const {
-    pinterest
-} = require("@bochilteam/scraper");
-const {
-    readFileSync
-} = require("fs");
-const hxz = require("hxz-api").default;
+const cheerio = require('cheerio');
+const fetch = require('node-fetch');
+const { lookup } = require('mime-types');
+const { URL_REGEX } = require('@adiwajshing/baileys');
 
-let handler = async (m, {
-    conn,
-    args,
-    usedPrefix,
-    text,
-    command
-}) => {
-    if (!text) return m.reply("Input query link\nExample: *.pinterest* jokowi")
-    await m.reply(wait)
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+    text = text.endsWith('SMH') ? text.replace('SMH', '') : text;
+    if (!text) throw 'Input Query / Pinterest Url';
+    let res = await pinterest(text);
+    let mime = await lookup(res);
+    let link = await shortUrl(res);
+    text.match(URL_REGEX) ?
+        await conn.sendMessage(m.chat, { [mime.split('/')[0]]: { url: res }, caption: `Succes Download: ${await shortUrl(res)}` }, { quoted: m }) :
+        await conn.sendFile(m.chat, res, text + '.jpeg', `Result From: ${text.toUpperCase()}\n${link}`, m, false);
+};
+handler.help = ['pinterest2 <pencarian>'];
+handler.tags = ['internet'];
+handler.command = /^(pin2|pinterest2)?$/i;
 
-    let res1, res2, res3, res4, res5;
-    let tag = `@${m.sender.split('@')[0]}`;
+handler.limit = true;
+handler.register = true;
 
-    try {
-        res1 = await searchPinterest(text);
-        if (res1) {
-            let v1img = res1.result.getRandom();
-            let isImagev1 = await detectImage(v1img);
-            if (isImagev1) {
-                await conn.sendMessage(m.chat, {
-                    image: {
-                        url: v1img
-                    },
-                    caption: `🔍 *[ RESULT V1 ]*\nRequest by: ${tag}`,
-                    mentions: [m.sender]
-                }, {
-                    quoted: m
-                });
-            }
-        }
-    } catch (error) {
-        try {
-            res2 = await bochilPinterestImages(text);
-            if (res2) {
-                let v2img = res2.getRandom();
-                let isImagev2 = await detectImage(v2img);
-                if (isImagev2) {
-                    await conn.sendMessage(m.chat, {
-                        image: {
-                            url: v2img
-                        },
-                        caption: `🔍 *[ RESULT V2 ]*\nRequest by: ${tag}`,
-                        mentions: [m.sender]
-                    }, {
-                        quoted: m
-                    });
-                }
-            }
-        } catch (error) {
-            try {
-                // ... (unchanged code)
-            } catch (error) {
-                try {
-                    res4 = await hxzPinterestImages(text);
-                    if (res4) {
-                        let v4img = res4.getRandom();
-                        let isImagev4 = await detectImage(v4img);
-                        if (isImagev4) {
-                            await conn.sendMessage(m.chat, {
-                                image: {
-                                    url: v4img
-                                },
-                                caption: `🔍 *[ RESULT V4 ]*\nRequest by: ${tag}`,
-                                mentions: [m.sender]
-                            }, {
-                                quoted: m
-                            });
-                        }
-                    }
-                } catch (error) {
-                    try {
-                        let response = await fetch("https://api.lolhuman.xyz/api/pinterest2?apikey=" + lolkey + "&query=" + text);
-                        res5 = await response.json();
-                        if (res5) {
-                            let v5img = res5.result.getRandom();
-                            let isImagev5 = await detectImage(v5img);
-                            if (isImagev5) {
-                                await conn.sendMessage(m.chat, {
-                                    image: {
-                                        url: v5img
-                                    },
-                                    caption: `🔍 *[ RESULT V5 ]*\nRequest by: ${tag}`,
-                                    mentions: [m.sender]
-                                }, {
-                                    quoted: m
-                                });
-                            }
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        await m.reply("An error occurred");
-                    }
-                }
-            }
-        }
+module.exports = handler;
+
+async function pinterest(query) {
+    if (query.match(URL_REGEX)) {
+        let res = await fetch('https://www.expertsphp.com/facebook-video-downloader.php', {
+            method: 'post',
+            body: new URLSearchParams(Object.entries({
+                url: query
+            }))
+        });
+        let $ = cheerio.load(await res.text());
+        let data = $('table[class="table table-condensed table-striped table-bordered"]').find('a').attr('href');
+        if (!data) throw 'Can\'t download post :/';
+        return data;
+    } else {
+        let res = await fetch(`https://www.pinterest.com/resource/BaseSearchResource/get/?source_url=%2Fsearch%2Fpins%2F%3Fq%3D${query}&data=%7B%22options%22%3A%7B%22isPrefetch%22%3Afalse%2C%22query%22%3A%22${query}%22%2C%22scope%22%3A%22pins%22%2C%22no_fetch_context_on_resource%22%3Afalse%7D%2C%22context%22%3A%7B%7D%7D&_=1619980301559`);
+        let json = await res.json();
+        let data = json.resource_response.data.results;
+        if (!data.length) throw `Query "${query}" not found :/`;
+        return data[~~(Math.random() * (data.length))].images.orig.url;
     }
 }
 
-handler.help = ["pinterest"];
-handler.tags = ["internet"];
-handler.command = /^(pinterest2|pin2)$/i;
-module.exports = handler;
-
-/* New Line */
-// ... (unchanged code)
+async function shortUrl(url) {
+    return await (await fetch(`https://tinyurl.com/api-create.php?url=${url}`)).text();
+    }
