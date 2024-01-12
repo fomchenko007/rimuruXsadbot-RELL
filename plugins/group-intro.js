@@ -140,5 +140,8 @@ SEMOGA BETAH!!
 m.reply(intro)
 }
 handler.command = /^(intro)$/i
+handler.help = ['intro'];
+handler.tags = ['main'];
 
+module.exports = handler
 module.exports = handler
