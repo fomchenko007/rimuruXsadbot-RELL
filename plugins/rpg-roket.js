@@ -85,9 +85,9 @@ let handler = async (m, {
 `
 
 
-        global.db.data.users[who].money += ngrk4
-        global.db.data.users[who].exp += ngrk5
-        global.db.data.users[who].roket += 1
+        global.db.data.users[m.sender].money += ngrk4
+        global.db.data.users[m.sender].exp += ngrk5
+        global.db.data.users[m.sender].roket += 1
 
 
         setTimeout(() => {
