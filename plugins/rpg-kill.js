@@ -3,7 +3,6 @@ const timeout = 604800000
 let handler = async (m, { conn, usedPrefix, text }) => {
 	    let time = global.db.data.users[m.sender].lastkill + 604800000
   if (new Date - global.db.data.users[m.sender].lastkill< 604800000) throw `Anda sudah menggunakan kill\nTunggu selama ${msToTime(time - new Date())} lagi`
- let nabung = global.db.data.users[m.sender].nabung += 100000
 let bank = global.db.data.users[m.sender].bank += 1000000
 	let money = `${Math.floor(Math.random() * 30000)}`.trim()
 	let exp = `${Math.floor(Math.random() * 999)}`.trim()
@@ -12,7 +11,7 @@ let bank = global.db.data.users[m.sender].bank += 1000000
 	global.db.data.users[m.sender].exp += exp * 1
 	global.db.data.users[m.sender].kardus += kardus * 1
 	global.db.data.users[m.sender].lastkill = new Date * 1
-  m.reply(`Selamat kamu mendapatkan : \n+${money} Money\n+${kardus} Kardus\n+${exp} Exp\n+${bank} Bank\n+${nabung} Nabung`)
+  m.reply(`Selamat kamu mendapatkan : \n+${money} Money\n+${kardus} Kardus\n+${exp} Exp\n+${bank} Bank`)
   setTimeout(() => {
 					conn.reply(m.chat, `Yuk waktunya kill lagi 👋…`, m)
 					}, timeout)
