@@ -52,16 +52,16 @@ Hi %name
   乂  *S T A T I S T I C*
 
 . .╭── ︿︿︿︿︿ .   .   .   .   .   . 
-. .┊ ‹‹ *ɴᴀᴍᴇ* :: %name
-. .┊•*⁀➷ °... ℛᥱᥲd thι᥉ ...
-. .╰─── ︶︶︶︶ ♡⃕  ⌇. . .
-. . ┊⿻ [ *ʀᴜɴᴛɪᴍᴇ* :: %muptime] . .
-. . ┊⿻ [ *ᴘʀᴇғɪx* :: <%p>] . .
-. . ┊⿻ [ *ᴅᴀᴛᴀʙᴀsᴇ* :: %totalreg] . .
-. . ┊⿻ [ *ᴅᴀᴛᴇ* :: %date]. . 
-. . ┊⿻ [ *ᴘʟᴀᴛғᴏʀᴍ* :: linux]. . 
-. . ┊⿻ [ *ʟɪʙʀᴀʀʏ* :: @whiskeysocket/baileys]. . 
-. . ┊⿻ [ *ᴄʀᴇᴀᴛᴏʀ* :: dmss slbeww]. . 
+. .┊ *ɴᴀᴍᴇ* :: %name
+. .┊  ... ℛᥱᥲd thι᥉ ...
+. .╰─── ︶︶︶︶︶  ⌇. . .
+. . ┊ [ *ʀᴜɴᴛɪᴍᴇ* :: %muptime] . .
+. . ┊ [ *ᴘʀᴇғɪx* :: <%p>] . .
+. . ┊ [ *ᴅᴀᴛᴀʙᴀsᴇ* :: %totalreg] . .
+. . ┊ [ *ᴅᴀᴛᴇ* :: %date]. . 
+. . ┊ [ *ᴘʟᴀᴛғᴏʀᴍ* :: linux]. . 
+. . ┊ [ *ʟɪʙʀᴀʀʏ* :: @whiskeysocket/baileys]. . 
+. . ┊ [ *ᴄʀᴇᴀᴛᴏʀ* :: dmss slbeww]. . 
 . . ╰─────────╮
 
 *Jika menemukan error silahkan laporkan ke owner dengan mengetik .report*
