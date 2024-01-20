@@ -67,8 +67,8 @@ Hi %name
 *Jika menemukan error silahkan laporkan ke owner dengan mengetik .report*
 
 `.trimStart(),
-  header: '●《 *%category* 》',
-  body: `│○ *%cmd* %islimit %isPremium `,
+  header: '╭─《 *%category* 》',
+  body: `│○ %cmd %islimit %isPremium `,
   footer: '╰─── –',
   after: `Rimuru ᴀɪ By Dmsss`,
 }
